@@ -10,13 +10,6 @@
 			margin: auto;
 			display: block;
 		}
-		.cell {
-			fill: white;
-		}
-		/* this rule has to be more specific than .cell get precedence */
-		.cell.alive {
-			fill: black;
-		}
 		.hidden {
 			display: none;
 		}
@@ -70,9 +63,9 @@
 					rect.setAttribute("width", cell_size);
 					rect.setAttribute("height", cell_size);
 
-					rect.classList.add("cell");
+					rect.style.fill = "white";
 					if(grid[i][j] == 1) {
-						rect.classList.add("alive");
+						rect.style.fill = "black";
 					}
 
 					grid_element.append(rect);
@@ -123,11 +116,7 @@
 				var rect_id = "c-" + i.toString() + "-" + j.toString();
 				var rect = document.getElementById(rect_id);
 
-				if(new_val == 1) {
-					rect.classList.add("alive");
-				} else {
-					rect.classList.remove("alive");
-				}
+				rect.style.fill = new_val == 1 ? "black" : "white";
 			});
 
 			var elapsed = Date.now() - start;
