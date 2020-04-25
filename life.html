@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Game of Life</title>
+	<style>
+		#grid {
+			margin: auto;
+			border-spacing: 0;
+		}
+		#grid tr {
+			border: 1px solid #cccccc;
+		}
+		#grid td {
+			padding: 0;
+			border: 1px solid #cccccc;
+		}
+		.filled {
+			background: black;
+		}
+		.cell {
+			height: 11px;
+			width: 11px; 
+		}
+	</style>
+</head>
+<body>
+
+	<div style="width: 25%; text-align: center; float: left; margin-top: 10em;">
+		<p><a href="https://en.wikipedia.org/wiki/John_Horton_Conway">John Conway</a>, 1937 - 2020. <a href="https://arstechnica.com/science/2020/04/john-conway-inventor-of-the-game-of-life-has-died-of-covid-19/">RIP</a>		
+	</div>
+
+	<table id="grid">
+	</table>
+
+	<script>
+		var num_rows = 50;
+		var num_cols = 50;
+		var beginning_fill = 0.25; // percentage
+		var pause_time = 1200;
+
+		var grid;
+
+		function initialize() {
+			grid = new Array(num_rows);
+
+			for(var i = 0; i < num_rows; i++) {
+				var tr = document.createElement("tr");
+
+				grid[i] = new Array(num_cols);
+
+				for(var j = 0; j < num_cols; j++) {
+					grid[i][j] = Math.random() <= beginning_fill ? 1 : 0;
+
+					var td = document.createElement("td");
+
+					var div = document.createElement("div");
+					div.id = i.toString() + "," + j.toString();
+
+					div.classList.add("cell");
+
+					if(grid[i][j] == 1) {
+						div.classList.add("filled");
+					}
+
+					td.append(div);
+					tr.append(td);				
+				}
+
+				document.getElementById("grid").append(tr);
+			}
+		}
+
+		function get_neighbors(i, j) {
+			return [
+				i > 0 && j > 0 ? grid[i-1][j-1] : null,
+				i > 0 ? grid[i-1][j] : null,
+				i > 0 && j < num_cols - 1 ? grid[i-1][j+1] : null,
+				j > 0 ? grid[i][j-1] : null,
+				j < 19 ? grid[i][j+1] : null,
+				i < num_rows - 1 && j > 0 ? grid[i+1][j-1] : null,
+				i < num_rows - 1 ? grid[i+1][j] : null,
+				i < num_rows - 1 && num_cols - 1 ? grid[i+1][j+1] : null
+			].filter(val => val !== null);
+		}
+
+		function iterate() {
+			var start = Date.now();
+
+			var changes = [];
+
+			for(var i = 0; i < num_rows; i++) {
+				for(var j = 0; j < num_cols; j++) {
+					var is_alive = grid[i][j] == 1;
+					var neighbors = get_neighbors(i,j);
+					var count = neighbors.filter(val => val == 1).length;
+					if(is_alive) {
+						if(!(count == 2 || count == 3)) {
+							changes.push([i, j, 0])
+						}
+					} else {
+						if(count == 3) {
+							changes.push([i, j, 1])
+						}
+					}
+				}
+			}
+
+			changes.forEach(change => {
+				var [i, j, new_val] = change;
+
+				grid[i][j] = new_val;
+
+				var div_id = i.toString() + "," + j.toString();
+				var div = document.getElementById(div_id);
+
+				if(new_val == 1) {
+					div.classList.add("filled");
+				} else {
+					div.classList.remove("filled");
+				}
+			});
+
+			var elapsed = Date.now() - start;
+
+			//console.log("Took: " + elapsed + "ms");
+
+			setTimeout(function() {
+				iterate();
+			}, pause_time);
+		}
+
+		initialize()
+
+		setTimeout(function() {
+			iterate();
+		}, pause_time);
+
+	</script>
+
+</body>
+</html>
