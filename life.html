@@ -85,18 +85,6 @@
 			document.getElementById("loading").classList.add("hidden");
 		}
 
-		function get_alive_neighbor_count(i, j) {
-			return 0 +
-				((i > 0) && (j > 0)                       ? grid[i-1][j-1] : 0) +
-				((i > 0)                                  ? grid[i-1][j] : 0) +
-				((i > 0) && (j < num_cols - 1)            ? grid[i-1][j+1] : 0) +
-				((j > 0)                                  ? grid[i][j-1] : 0) +
-				((j < num_cols - 1)                       ? grid[i][j+1] : 0) +
-				((i < num_rows - 1) && (j > 0)            ? grid[i+1][j-1] : 0) +
-				((i < num_rows - 1)                       ? grid[i+1][j] : 0) +
-				((i < num_rows - 1) && (j < num_cols - 1) ? grid[i+1][j+1] : 0);
-		}
-
 		function iterate() {
 			var start = Date.now();
 
@@ -105,7 +93,16 @@
 			for(var i = 0; i < num_rows; i++) {
 				for(var j = 0; j < num_cols; j++) {
 					var is_alive = grid[i][j] == 1;
-					var count = get_alive_neighbor_count(i,j);
+					var count =
+						((i > 0) && (j > 0)                       ? grid[i-1][j-1] : 0) +
+						((i > 0)                                  ? grid[i-1][j] : 0) +
+						((i > 0) && (j < num_cols - 1)            ? grid[i-1][j+1] : 0) +
+						((j > 0)                                  ? grid[i][j-1] : 0) +
+						((j < num_cols - 1)                       ? grid[i][j+1] : 0) +
+						((i < num_rows - 1) && (j > 0)            ? grid[i+1][j-1] : 0) +
+						((i < num_rows - 1)                       ? grid[i+1][j] : 0) +
+						((i < num_rows - 1) && (j < num_cols - 1) ? grid[i+1][j+1] : 0);
+
 					if(is_alive) {
 						if(!(count == 2 || count == 3)) {
 							changes.push([i, j, 0])
