@@ -1,73 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Game of Life</title>
+	<title>Game of Life: John Conway, 1937 - 2020. RIP.</title>
 	<style>
 		#grid {
+			background-color: #cccccc;
+			width: 95%;
+			height: 95%;
 			margin: auto;
-			border-spacing: 0;
-		}
-		#grid tr {
-			border: 1px solid #cccccc;
-		}
-		#grid td {
-			padding: 0;
-			border: 1px solid #cccccc;
-		}
-		.filled {
-			background: black;
+			display: block;
 		}
 		.cell {
-			height: 11px;
-			width: 11px; 
+			fill: white;
+		}
+		/* this rule has to be more specific than .cell get precedence */
+		.cell.alive {
+			fill: black;
+		}
+		.hidden {
+			display: none;
 		}
 	</style>
 </head>
 <body>
 
-	<div style="width: 25%; text-align: center; float: left; margin-top: 10em;">
-		<p><a href="https://en.wikipedia.org/wiki/John_Horton_Conway">John Conway</a>, 1937 - 2020. <a href="https://arstechnica.com/science/2020/04/john-conway-inventor-of-the-game-of-life-has-died-of-covid-19/">RIP</a>		
-	</div>
+	<p id="loading">Loading...</p>
 
-	<table id="grid">
-	</table>
+	<svg id="grid" class="hidden">
+	</svg>
 
 	<script>
-		var num_rows = 50;
-		var num_cols = 50;
+	window.addEventListener('DOMContentLoaded', function() {
+
+		var num_cols = 300;
+		var num_rows = 0; // rows is derived from cols according to aspect ratio of screen
+
 		var beginning_fill = 0.25; // percentage
-		var pause_time = 1200;
+		var pause_time = 100;
+		var cell_size = 8;
+		var cell_spacing = 2;
 
 		var grid;
 
 		function initialize() {
+
+			var aspect = window.innerHeight / window.innerWidth;
+			num_rows = Math.round(aspect * num_cols);
+
 			grid = new Array(num_rows);
 
-			for(var i = 0; i < num_rows; i++) {
-				var tr = document.createElement("tr");
+			var grid_element = document.getElementById("grid");
 
+			// set up the coordinate system of inner svg
+			var width = (cell_spacing*(num_cols+1)) + (cell_size*num_cols);
+			var height = (cell_spacing*(num_rows+1)) + (cell_size*num_rows);
+			grid_element.setAttribute("viewBox", "0 0 " + width + " " + height);
+
+			for(var i = 0; i < num_rows; i++) {
 				grid[i] = new Array(num_cols);
 
 				for(var j = 0; j < num_cols; j++) {
 					grid[i][j] = Math.random() <= beginning_fill ? 1 : 0;
 
-					var td = document.createElement("td");
+					var rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
 
-					var div = document.createElement("div");
-					div.id = i.toString() + "," + j.toString();
+					rect.id = "c-" + i.toString() + "-" + j.toString();
+					rect.setAttribute("y", (cell_spacing*(i+1)) + (cell_size*i));
+					rect.setAttribute("x", (cell_spacing*(j+1)) + (cell_size*j));
+					rect.setAttribute("width", cell_size);
+					rect.setAttribute("height", cell_size);
 
-					div.classList.add("cell");
-
+					rect.classList.add("cell");
 					if(grid[i][j] == 1) {
-						div.classList.add("filled");
+						rect.classList.add("alive");
 					}
 
-					td.append(div);
-					tr.append(td);				
+					grid_element.append(rect);
 				}
 
-				document.getElementById("grid").append(tr);
 			}
+
+			grid_element.classList.remove("hidden");
+
+			document.getElementById("loading").classList.add("hidden");
 		}
 
 		function get_neighbors(i, j) {
@@ -110,13 +125,13 @@
 
 				grid[i][j] = new_val;
 
-				var div_id = i.toString() + "," + j.toString();
-				var div = document.getElementById(div_id);
+				var rect_id = "c-" + i.toString() + "-" + j.toString();
+				var rect = document.getElementById(rect_id);
 
 				if(new_val == 1) {
-					div.classList.add("filled");
+					rect.classList.add("alive");
 				} else {
-					div.classList.remove("filled");
+					rect.classList.remove("alive");
 				}
 			});
 
@@ -129,11 +144,12 @@
 			}, pause_time);
 		}
 
-		initialize()
+		initialize();
 
 		setTimeout(function() {
 			iterate();
 		}, pause_time);
+	});
 
 	</script>
 
