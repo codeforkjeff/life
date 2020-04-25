@@ -72,14 +72,14 @@
 
 		function get_neighbors(i, j) {
 			return [
-				i > 0 && j > 0 ? grid[i-1][j-1] : null,
-				i > 0 ? grid[i-1][j] : null,
-				i > 0 && j < num_cols - 1 ? grid[i-1][j+1] : null,
-				j > 0 ? grid[i][j-1] : null,
-				j < 19 ? grid[i][j+1] : null,
-				i < num_rows - 1 && j > 0 ? grid[i+1][j-1] : null,
-				i < num_rows - 1 ? grid[i+1][j] : null,
-				i < num_rows - 1 && num_cols - 1 ? grid[i+1][j+1] : null
+				(i > 0) && (j > 0)                       ? grid[i-1][j-1] : null,
+				(i > 0)                                  ? grid[i-1][j] : null,
+				(i > 0) && (j < num_cols - 1)            ? grid[i-1][j+1] : null,
+				(j > 0)                                  ? grid[i][j-1] : null,
+				(j < num_cols - 1)                       ? grid[i][j+1] : null,
+				(i < num_rows - 1) && (j > 0)            ? grid[i+1][j-1] : null,
+				(i < num_rows - 1)                       ? grid[i+1][j] : null,
+				(i < num_rows - 1) && (j < num_cols - 1) ? grid[i+1][j+1] : null
 			].filter(val => val !== null);
 		}
 
