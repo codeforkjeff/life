@@ -19,8 +19,8 @@
 
 	<p id="loading">Loading...</p>
 
-	<svg id="grid" class="hidden">
-	</svg>
+	<div id="grid-container">
+	</div>
 
 	<script>
 	window.addEventListener('DOMContentLoaded', function() {
@@ -42,7 +42,8 @@
 
 			grid = new Array(num_rows);
 
-			var grid_element = document.getElementById("grid");
+			var grid_element = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+			grid_element.id = "grid";
 
 			// set up the coordinate system of inner svg
 			var width = (cell_spacing*(num_cols+1)) + (cell_size*num_cols);
@@ -73,7 +74,7 @@
 
 			}
 
-			grid_element.classList.remove("hidden");
+			document.getElementById("grid-container").append(grid_element);
 
 			document.getElementById("loading").classList.add("hidden");
 		}
